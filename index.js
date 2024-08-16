@@ -32,14 +32,28 @@ async function run() {
 
     app.get("/products", async (req, res) => {
       const search = req.query.search;
+      const page = parseInt(req.query.page) || 1;
+      const limit = 6;
+      const skip = (page - 1) * limit;
 
       let query = {
         name: { $regex: search, $options: "i" },
       };
 
-      const cursor = productsCollection.find(query);
-      const result = await cursor.toArray();
-      res.send(result);
+      const products = await productsCollection
+        .find(query)
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+
+      const total = await productsCollection.countDocuments();
+
+      res.send({
+        products,
+        total,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+      });
     });
   } finally {
   }
