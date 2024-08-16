@@ -36,6 +36,8 @@ async function run() {
       const sortDate = req.query.sortDate;
       const brand = req.query.brand;
       const category = req.query.category;
+      const minPrice = parseFloat(req.query.minPrice) || 0;
+      const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_VALUE;
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
       const skip = (page - 1) * limit;
@@ -55,7 +57,10 @@ async function run() {
       }
 
       // Build the search query
-      let query = search ? { name: { $regex: search, $options: "i" } } : {};
+      let query = {
+        name: { $regex: search, $options: "i" },
+        price: { $gte: minPrice, $lte: maxPrice },
+      };
 
       if (brand) {
         query.brand = brand;
