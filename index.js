@@ -32,15 +32,24 @@ async function run() {
 
     app.get("/products", async (req, res) => {
       const search = req.query.search || "";
-      const sort = req.query.sort;
+      const sortPrice = req.query.sortPrice;
+      const sortDate = req.query.sortDate;
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
       const skip = (page - 1) * limit;
 
-      if (sort === "price_asc") {
-        sortOption = { price: 1 }; // Sort by price Low to High
-      } else if (sort === "price_desc") {
-        sortOption = { price: -1 }; // Sort by price High to Low
+      let sortOption = {};
+
+      if (sortPrice === "price_asc") {
+        sortOption.price = 1; // Sort by price Low to High
+      } else if (sortPrice === "price_desc") {
+        sortOption.price = -1; // Sort by price High to Low
+      }
+
+      if (sortDate === "date_desc") {
+        sortOption.createdAt = -1; // Sort by date Newest first
+      } else if (sortDate === "date_asc") {
+        sortOption.createdAt = 1; // Sort by date Oldest first
       }
 
       // Build the search query
