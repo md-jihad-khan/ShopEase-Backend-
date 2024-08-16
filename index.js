@@ -35,6 +35,7 @@ async function run() {
       const sortPrice = req.query.sortPrice;
       const sortDate = req.query.sortDate;
       const brand = req.query.brand;
+      const category = req.query.category;
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
       const skip = (page - 1) * limit;
@@ -58,6 +59,10 @@ async function run() {
 
       if (brand) {
         query.brand = brand;
+      }
+
+      if (category) {
+        query.category = category;
       }
 
       // Find the products with the search query, pagination
