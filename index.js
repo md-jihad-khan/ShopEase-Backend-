@@ -31,22 +31,31 @@ async function run() {
     const productsCollection = database.collection("Products");
 
     app.get("/products", async (req, res) => {
-      const search = req.query.search;
+      const search = req.query.search || "";
+      const sort = req.query.sort;
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
       const skip = (page - 1) * limit;
 
-      let query = {
-        name: { $regex: search, $options: "i" },
-      };
+      if (sort === "price_asc") {
+        sortOption = { price: 1 }; // Sort by price Low to High
+      } else if (sort === "price_desc") {
+        sortOption = { price: -1 }; // Sort by price High to Low
+      }
 
+      // Build the search query
+      const query = search ? { name: { $regex: search, $options: "i" } } : {};
+
+      // Find the products with the search query, pagination
       const products = await productsCollection
         .find(query)
         .skip(skip)
         .limit(limit)
+        .sort(sortOption)
         .toArray();
 
-      const total = await productsCollection.countDocuments();
+      // Count the number of documents that match the search query
+      const total = await productsCollection.countDocuments(query);
 
       res.send({
         products,
