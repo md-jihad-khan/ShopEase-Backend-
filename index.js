@@ -34,6 +34,7 @@ async function run() {
       const search = req.query.search || "";
       const sortPrice = req.query.sortPrice;
       const sortDate = req.query.sortDate;
+      const brand = req.query.brand;
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
       const skip = (page - 1) * limit;
@@ -53,7 +54,11 @@ async function run() {
       }
 
       // Build the search query
-      const query = search ? { name: { $regex: search, $options: "i" } } : {};
+      let query = search ? { name: { $regex: search, $options: "i" } } : {};
+
+      if (brand) {
+        query.brand = brand;
+      }
 
       // Find the products with the search query, pagination
       const products = await productsCollection
