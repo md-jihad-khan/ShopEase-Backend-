@@ -31,7 +31,13 @@ async function run() {
     const productsCollection = database.collection("Products");
 
     app.get("/products", async (req, res) => {
-      const cursor = productsCollection.find();
+      const search = req.query.search;
+
+      let query = {
+        name: { $regex: search, $options: "i" },
+      };
+
+      const cursor = productsCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
     });
