@@ -34,9 +34,8 @@ yarn install
 
 ### Running the Project Locally:
 
-npm start
-# or
-yarn start
+node index.js
+
 
 
 
